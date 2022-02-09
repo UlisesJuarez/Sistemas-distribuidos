@@ -15,24 +15,24 @@ class Servidor{
                 DataOutputStream salida=new DataOutputStream(conexion.getOutputStream());
                 DataInputStream entrada=new DataInputStream(conexion.getInputStream());     
                 
-                int n=entrada.readInt();
-                System.out.println(n);
+                // int n=entrada.readInt();
+                // System.out.println(n);
 
-                double x=entrada.readDouble();
-                System.out.println(x);
+                // double x=entrada.readDouble();
+                // System.out.println(x);
 
-                byte[] buffer=new byte[4];
-                read(entrada,buffer,0,4);
-                System.out.println(new String(buffer,"UTF-8"));
+                // byte[] buffer=new byte[4];
+                // read(entrada,buffer,0,4);
+                // System.out.println(new String(buffer,"UTF-8"));
 
                 salida.write("HOLA".getBytes());
                 
-                byte[] a =new byte[5*8];
-                read(entrada, a,0,5*8);
+                byte[] a =new byte[1000*8];
+                read(entrada, a,0,1000*8);
 
                 ByteBuffer b=ByteBuffer.wrap(a);
 
-                for(int i=0; i<5; i++)System.out.println(b.getDouble());
+                for(int i=1; i<1001; i++)System.out.println(b.getDouble());
                 conexion.close();
                 servidor.close();
                 break;
