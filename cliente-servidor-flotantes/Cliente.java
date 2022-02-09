@@ -21,7 +21,8 @@ class Cliente{
             System.out.println(new String(buffer,"UTF-8"));
 
             ByteBuffer b=ByteBuffer.allocate(1000*8);
-
+            
+            long starting_time=System.currentTimeMillis();
             for (int i = 1; i < 1001; i++) {
                 b.putDouble(i);
             }
@@ -33,6 +34,8 @@ class Cliente{
 
             byte[] a=b.array();
             salida.write(a);
+            long current_time=System.currentTimeMillis()-starting_time;
+            System.out.println(current_time);
             Thread.sleep(1000);
             
             conexion.close();
