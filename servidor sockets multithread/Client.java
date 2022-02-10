@@ -3,7 +3,7 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
-class Cliente{
+class Client{
     public static void main(String[] args) {
         try {
             Socket connection=new Socket("localhost",50000);

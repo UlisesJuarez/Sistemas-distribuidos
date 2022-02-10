@@ -26,7 +26,7 @@ class Server{
                 read(input, buffer,0,4);
                 System.out.println(new String(buffer,"UTF-8"));
 
-                output.writeInt("HOLA".getBytes());
+                output.write("HOLA".getBytes());
 
                 byte[] a=new byte[5*8];
                 read(input,a,0,5*8);
@@ -55,12 +55,16 @@ class Server{
         }
     }
     public static void main(String[] args) {
-        ServerSocket server=new ServerSocket(50000);
-        for(;;)
-        {
-            Socket connection=server.accept();
-            Worker w=new Worker(connection);
-            w.start();
+        try {
+            ServerSocket server=new ServerSocket(50000);
+            for(;;)
+            {
+                Socket connection=server.accept();
+                Worker w=new Worker(connection);
+                w.start();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
