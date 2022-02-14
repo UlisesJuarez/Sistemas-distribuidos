@@ -29,26 +29,24 @@ public class CalcularPI {
           System.out.println(PiValue);
         } catch (Exception ex) {
           System.out.println(ex.toString());
-        } finally {
-          break;
         }
       case 1:
-        System.out.println("servidor");
+        System.out.println("Servidor 1...");
         Servidor servidor1 = new Servidor(1, 50001);
         servidor1.empieza();
         break;
       case 2:
-        System.out.println("servidor");
+        System.out.println("Servidor 2...");
         Servidor servidor2 = new Servidor(2, 50002);
         servidor2.empieza();
         break;
       case 3:
-        System.out.println("servidor");
+        System.out.println("Servidor 3...");
         Servidor servidor3 = new Servidor(3, 50003);
         servidor3.empieza();
         break;
       case 4:
-        System.out.println("servidor");
+        System.out.println("Servidor 4...");
         Servidor servidor4 = new Servidor(4, 50004);
         servidor4.empieza();
         break;
@@ -69,13 +67,10 @@ public class CalcularPI {
     }
 
     public void run() {
-
       try {
-
         for (;;) {
           try {
             Socket conexion = new Socket("localhost", puerto);
-            // DataOutputStream salida= new DataOutputStream(conexion.getOutputStream());
             DataInputStream entrada = new DataInputStream(conexion.getInputStream());
             double resultado = entrada.readDouble();
             PiValue += resultado;
@@ -84,14 +79,11 @@ public class CalcularPI {
           } catch (Exception e) {
             Thread.sleep(100);
           }
-
         }
-
       } catch (Exception ex) {
         System.out.println(ex.getMessage());
       }
     }
-
   }
 
   static class Servidor {
@@ -114,7 +106,6 @@ public class CalcularPI {
 
         for (double i = 0; i < 1000000; i++) {
           resultado = resultado + (4 / ((8 * i) + (2 * (numNodoDouble - 2)) + 3));
-          // System.out.println((4/((8*i)+(2*( numNodoDouble-2))+3)));
         }
         if (numNodo % 2 == 0) {
           resultado = -resultado;
@@ -123,12 +114,9 @@ public class CalcularPI {
         System.out.println(resultado);
         conexion.close();
         servidor.close();
-
       } catch (Exception ex) {
-        System.out.println("cliente");
+        System.out.println("Cliente");
       }
     }
-
   }
-
 }
