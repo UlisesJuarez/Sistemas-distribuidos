@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 
 public class CalcularPI {
   static double PiValue = 0;
@@ -53,9 +52,7 @@ public class CalcularPI {
       default:
         System.out.println("Escriba un numero entre 0 y 4");
         break;
-
     }
-
   }
 
   static class Mensajero extends Thread {
@@ -69,12 +66,9 @@ public class CalcularPI {
     static Object obj = new Object();
 
     public void run() {
-
       try {
-
         for (;;) {
           try {
-
             Socket conexion = new Socket("localhost", puerto);
             DataInputStream entrada = new DataInputStream(conexion.getInputStream());
             double resultado = entrada.readDouble();
@@ -123,7 +117,7 @@ public class CalcularPI {
         conexion.close();
         servidor.close();
       } catch (Exception ex) {
-        System.out.println("cliente");
+        System.out.println(ex.toString());
       }
     }
   }
