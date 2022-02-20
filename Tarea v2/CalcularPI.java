@@ -75,7 +75,7 @@ public class CalcularPI {
             synchronized (obj) {
               PiValue += resultado;
             }
-            System.out.println(Integer.toString(puerto) + "---" + Double.toString(PiValue));
+            System.out.println(Integer.toString(puerto) + "---> " + Double.toString(PiValue));
             conexion.close();
             break;
           } catch (Exception e) {
