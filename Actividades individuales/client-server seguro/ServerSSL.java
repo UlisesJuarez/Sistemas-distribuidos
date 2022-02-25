@@ -1,6 +1,7 @@
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.DataInputStream;
 import javax.net.ssl.SSLServerSocketFactory;
 
@@ -23,5 +24,13 @@ public class ServerSSL {
         System.out.println(x);
 
         connection.close();
+    }
+    static void write_file(String file,byte[] buffer)throws Exception{
+        FileOutputStream f=new FileOutputStream(file);
+        try {
+            f.write(buffer);
+        } finally {
+            f.close();
+        }
     }
 }

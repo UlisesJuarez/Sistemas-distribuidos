@@ -1,5 +1,6 @@
 import java.net.Socket;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.DataInputStream;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -26,5 +27,16 @@ public class ClientSSL {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+    static byte[] read_file(String file) throws Exception{
+        FileInputStream f=new FileInputStream(file);
+        byte[] buffer;
+        try {
+            buffer=new byte[f.available()];
+            f.read(buffer);
+        }finally{
+            f.close();
+        }
+        return buffer;
     }
 }
