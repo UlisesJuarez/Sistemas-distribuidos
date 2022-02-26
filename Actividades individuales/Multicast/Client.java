@@ -20,7 +20,7 @@ public class Client {
             NetworkInterface netInter=NetworkInterface.getByName("em1");
             socket.joinGroup(grupo, netInter);
 
-            byte a=recibe_mensaje(socket,4);
+            byte[] a=recibe_mensaje(socket,4);
             System.out.println(new String(a,"UTF-8"));
 
             byte[] buffer=recibe_mensaje(socket,5*8);
