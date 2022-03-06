@@ -9,15 +9,48 @@ public class MatrizDist {
     static double[][] B = new double[N][N];
     static double[][] C = new double[N][N];
 
-    public static void server(int portS) {
+    public static void server(int portS, int nodo) {
+        double[][] C1 = new double[N / 2][N / 2];
+        double[][] C2 = new double[N / 2][N];
+        double[][] C3 = new double[N][N / 2];
+        double[][] C4 = new double[N][N];
         try {
             ServerSocket server = new ServerSocket(portS);
             for (;;) {
                 Socket connection = server.accept();
                 DataInputStream input = new DataInputStream(connection.getInputStream());
-                short result = input.readShort();
-                System.out.println(result);
+                switch (nodo) {
+                    case 1:// 10.- Recibir la matriz C1 del nodo 1
+                    for (int i = 0; i < (N / 2); i++) {
+                        for (int j = 0; j < (N / 2); j++) {
+                            C1[i][j] = input.readDouble(); 
+                            C[i][j] = C1[i][j];
+                        }
+                    }
 
+                        break;
+                    case 2:// 11.- Recibir la matriz C2 del nodo 2
+                    for (int i = 0; i < (N / 2); i++) {
+                        for (int j = (N / 2); j < N; j++) {
+                            C2[i][j] = input.readDouble();
+                            C[i][j] = C2[i][j];
+                        }
+                    }
+
+                        break;
+                    case 3:// 12.- Recibir la matriz C3 del nodo 3
+                    for (int i = (N / 2); i < N; i++) {
+                        for (int j = 0; j < (N / 2); j++) {
+                            C3[i - (N / 2)][j] = input.readDouble();
+                            C[i][j] = C3[i - (N / 2)][j];
+                        }
+                    }
+
+                        break;
+
+                    default:
+                        break;
+                }
                 connection.close();
             }
         } catch (Exception ex) {
@@ -26,10 +59,10 @@ public class MatrizDist {
     }
 
     public static void client(int port, int nodo) {
-        double[][] A1 = new double[N/2][N];
-        double[][] A2 = new double[N/2][N];
-        double[][] B1 = new double[N/2][N];
-        double[][] B2 = new double[N/2][N];
+        double[][] A1 = new double[N / 2][N];
+        double[][] A2 = new double[N / 2][N];
+        double[][] B1 = new double[N / 2][N];
+        double[][] B2 = new double[N / 2][N];
         try {
             for (;;)
                 try {
@@ -37,46 +70,46 @@ public class MatrizDist {
                     DataOutputStream output = new DataOutputStream(connection.getOutputStream());
                     switch (nodo) {
                         case 1:
-                            for(int i = 0; i < (N/2); i++){
-                                for(int j = 0; j < N; j++){
-                                    A1 [i][j] = A [i][j];
-                                    B1 [i][j] = B [i][j];
+                            for (int i = 0; i < (N / 2); i++) {
+                                for (int j = 0; j < N; j++) {
+                                    A1[i][j] = A[i][j];
+                                    B1[i][j] = B[i][j];
                                     output.writeDouble(A1[i][j]); // 3.- Enviar la matriz A1 al nodo 1
-                                    output.writeDouble(B1[i][j]); // 4.-  Enviar la matriz B1 al nodo 1
+                                    output.writeDouble(B1[i][j]); // 4.- Enviar la matriz B1 al nodo 1
                                 }
                             }
                             break;
                         case 2:
-                            for(int i = 0; i < (N/2); i++){
-                                for(int j = 0; j < N; j++){
-                                    A1 [i][j] = A [i][j];
-                                    output.writeDouble(A1[i][j]); // 5.-  Enviar la matriz A1 al nodo 2.
+                            for (int i = 0; i < (N / 2); i++) {
+                                for (int j = 0; j < N; j++) {
+                                    A1[i][j] = A[i][j];
+                                    output.writeDouble(A1[i][j]); // 5.- Enviar la matriz A1 al nodo 2.
                                 }
                             }
-                            for(int i = (N/2); i < N; i++){
-                                for(int j = 0; j < N; j++){
-                                    B2 [i - (N/2)][j] = B [i][j];
-                                    output.writeDouble(B2[i - (N/2)][j]); // 6.- Enviar la matriz B2 al nodo 2.
+                            for (int i = (N / 2); i < N; i++) {
+                                for (int j = 0; j < N; j++) {
+                                    B2[i - (N / 2)][j] = B[i][j];
+                                    output.writeDouble(B2[i - (N / 2)][j]); // 6.- Enviar la matriz B2 al nodo 2.
                                 }
                             }
                             break;
                         case 3:
-                            for( int i = (N/2); i < N; i++){
-                                for(int j = 0; j < N;j++){
-                                    A2 [i - (N/2)][j] = A [i][j];
-                                    output.writeDouble(A2[i - (N/2)][j]); //7.- Enviar la matriz A2 al nodo 3.
+                            for (int i = (N / 2); i < N; i++) {
+                                for (int j = 0; j < N; j++) {
+                                    A2[i - (N / 2)][j] = A[i][j];
+                                    output.writeDouble(A2[i - (N / 2)][j]); // 7.- Enviar la matriz A2 al nodo 3.
                                 }
-                            }       
-                            for(int i = 0; i < (N/2); i++){
-                                for(int j = 0; j < N; j++){
-                                    B1 [i][j] = B [i][j];
+                            }
+                            for (int i = 0; i < (N / 2); i++) {
+                                for (int j = 0; j < N; j++) {
+                                    B1[i][j] = B[i][j];
                                     output.writeDouble(B1[i][j]);// 8.- Enviar la matriz B1 al nodo 3.
                                 }
                             }
                             break;
                         default:
                             break;
-                        }
+                    }
                     output.writeShort(nodo);
                     Thread.sleep(50);
                     connection.close();
@@ -106,9 +139,9 @@ public class MatrizDist {
             }
         }
         // if (N == 8)
-        //     printArray(A, N);
+        // printArray(A, N);
         // else
-        //     System.out.println("La matriz es muy grande para imprimir");
+        // System.out.println("La matriz es muy grande para imprimir");
 
     }
 
@@ -130,21 +163,21 @@ public class MatrizDist {
                         case 0:
                             System.out.println("Client running");
                             initializeArray();
-                            client(50001,nodo=1);
-                            client(50002, nodo=2);
-                            client(50003, nodo=3);
+                            client(50001, nodo = 1);
+                            client(50002, nodo = 2);
+                            client(50003, nodo = 3);
                             break;
                         case 1:
                             System.out.println("Server running on port 5001");
-                            server(50001);
+                            server(50001, nodo);
                             break;
                         case 2:
                             System.out.println("Server running on port 5002");
-                            server(50002);
+                            server(50002, nodo);
                             break;
                         case 3:
                             System.out.println("Server running on port 5003");
-                            server(50003);
+                            server(50003, nodo);
                             break;
 
                         default:
