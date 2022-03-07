@@ -140,11 +140,11 @@ public class MatricesDis {
             byte[] bytes = new byte[cols * 8];
             try {
                 read(input, bytes, 0, cols * 8);
-                ByteBuffer bf = ByteBuffer.wrap(bytes);
+                ByteBuffer b = ByteBuffer.wrap(bytes);
                 for (int j = 0; j < cols; j++)
-                    aux[i][j] = bf.getDouble();
+                    aux[i][j] = b.getDouble();
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return aux;
