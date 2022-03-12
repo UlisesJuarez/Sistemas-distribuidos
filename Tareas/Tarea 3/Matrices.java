@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 public class Matrices {
 
     static double checksum = 0;
-    static int N = 8;
+    static int N = 1000;
     static double[][] A = new double[N][N];
     static double[][] B = new double[N][N];
     static double[][] C = new double[N][N];
@@ -30,6 +30,8 @@ public class Matrices {
                 case 3:
                     servidor(nodo);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -41,14 +43,14 @@ public class Matrices {
         Socket nodo3 = new Socket();
 
         for (;;)
-                try {
-            nodo1 = new Socket("localhost", 50000);
-            nodo2 = new Socket("localhost", 50001);
-            nodo3 = new Socket("localhost", 50002);
-            break;
-        } catch (Exception e) {
-            Thread.sleep(100);
-        }
+            try {
+                nodo1 = new Socket("20.25.90.38", 50000);
+                nodo2 = new Socket("20.25.92.1", 50000);
+                nodo3 = new Socket("52.255.139.247", 50000);
+                break;
+            } catch (Exception e) {
+                Thread.sleep(100);
+            }
         // fin nuevo
 
         Worker w[] = new Worker[3];
@@ -62,11 +64,14 @@ public class Matrices {
             }
         }
 
-        System.out.println("Matriz A:");
-        printArray(A, N);
+        if(N == 4){
+            System.out.println("Matriz A:");
+            printArray(A, N);
 
-        System.out.println("Matriz B normal:");
-        printArray(B, N);
+            System.out.println("Matriz B normal:");
+            printArray(B, N);
+        }
+        
         // transponemos la matriz B, la matriz traspuesta queda en B
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < i; j++) {
@@ -75,8 +80,12 @@ public class Matrices {
                 B[j][i] = x;
             }
         }
-        System.out.println("Matriz B transpuesta:");
-        printArray(B, N);
+        
+        if(N == 4){
+            System.out.println("Matriz B transpuesta:");
+            printArray(B, N);
+        }
+        
 
         // Se mandan a servidor
         w[0] = new Worker(nodo1);
@@ -99,20 +108,19 @@ public class Matrices {
         bi = dividirMatriz(B, false);
         ci = productoMatrices(ai, bi);
 
-        for (int i = 0; i < N / 2; i++) {
-            for (int j = 0; j < N / 2; j++) {
+        for (int i = 0; i < N / 2; i++)
+            for (int j = 0; j < N / 2; j++) 
                 C[i + N / 2][j + N / 2] = ci[i][j];
-            }
-        }
 
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++) 
                 checksum += C[i][j];
-            }
+        
+        if(N == 4){
+            System.out.println("Matriz C");
+            printArray(C, N);
         }
-
-        System.out.println("Matriz C");
-        printArray(C, N);
+        
 
         System.out.println("check sum = " + checksum);
 
@@ -122,8 +130,10 @@ public class Matrices {
     }
 
     static void servidor(int nodo) throws Exception {
-        ServerSocket servidor = null;
+        ServerSocket servidor = new ServerSocket(50000);
         // Esto se hizo para probarlo de manera local
+        /*
+        ServerSocket servidor = null;
         
         switch(nodo){
             case 1:
@@ -136,7 +146,7 @@ public class Matrices {
                 servidor = new ServerSocket(50002);
                 break;
         }
-        
+         */
 
         Socket connection = servidor.accept();
 
