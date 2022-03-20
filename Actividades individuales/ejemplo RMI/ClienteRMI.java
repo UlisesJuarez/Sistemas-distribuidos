@@ -2,9 +2,7 @@ import java.rmi.Naming;
 
 public class ClienteRMI {
     public static void main(String[] args) throws Exception{
-        String url="rmi://localhost/prueba";
-
-        InterfaceRMI r=(InterfaceRMI)Naming.lookup(url);
+        InterfaceRMI r=(InterfaceRMI)Naming.lookup("rmi://localhost/prueba");
         
         System.out.println(r.mayusculas("hola"));
         System.out.println("suma: "+r.suma(10,20));
