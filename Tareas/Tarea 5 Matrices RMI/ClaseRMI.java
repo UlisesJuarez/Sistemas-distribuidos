@@ -2,7 +2,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ClaseRMI extends UnicastRemoteObject implements InterfaceRMI{
-    public static int N=8;
+    public static int N=4000;
 
     public ClaseRMI() throws RemoteException {
         super();

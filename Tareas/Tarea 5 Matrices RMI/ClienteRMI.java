@@ -1,7 +1,7 @@
 import java.rmi.Naming;
 
 public class ClienteRMI {
-    private static int N = 8;
+    private static int N = 4000;
 
     static void junta_matriz(float[][] resultante, float[][] parte, int ren, int col) {
         for (int i = 0; i < N / 4; i++)
@@ -118,7 +118,8 @@ public class ClienteRMI {
             imprimir(B, N);
             System.out.println("Matriz C");
             imprimir(C, N);
-            System.out.printf("Checksum: %.2f", checksum);
+           
         }
+        System.out.printf("Checksum: %.2f", checksum);
     }
 }
