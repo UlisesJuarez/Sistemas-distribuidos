@@ -43,19 +43,21 @@ public class Servicio {
     Connection conexion = pool.getConnection();
 
     if (articulo.nombre == null || articulo.nombre.equals(""))
-    return Response.status(400).entity(j.toJson(new Error("Ingresar el nombre del articulo"))).build();
-
+    return Response.status(400).entity(j.toJson(new Error("Ingresar el nombre del articulo")))
+        .build();
     if (articulo.descripcion == null || articulo.descripcion.equals(""))
-      return Response.status(400).entity(j.toJson(new Error("Ingresar la descripcion del articulo"))).build();
+      return Response.status(400).entity(j.toJson(new Error("Ingresar la descripcion del articulo")))
+          .build();
 
     if (articulo.precio <= 0.0f)
-      return Response.status(400).entity(j.toJson(new Error("Ingresar un precio valido"))).build();
+      return Response.status(400).entity(j.toJson(new Error("Ingresar un precio adecuado"))).build();
 
     if (articulo.cantidad <= 0)
-      return Response.status(400).entity(j.toJson(new Error("Ingresar una cantidad valida"))).build();
+      return Response.status(400).entity(j.toJson(new Error("Debe haber al menos un producto"))).build();
 
     if (articulo.foto == null)
-      return Response.status(400).entity(j.toJson(new Error("Ingresar una imagen articulo"))).build();
+      return Response.status(400).entity(j.toJson(new Error("Ingrese una imagen del articulo")))
+          .build();
 
     try {
       conexion.setAutoCommit(false);
@@ -131,7 +133,8 @@ public class Servicio {
           if (articulos_relacionados.size() > 0) {
             return Response.ok().entity(j.toJson(articulos_relacionados)).build();
           } else {
-            return Response.status(400).entity(j.toJson(new Error("No se encontrarón articulos relacionados."))).build();
+            return Response.status(400).entity(j.toJson(new Error("No se encontrarón articulos relacionados.")))
+                .build();
           }
         } finally {
           rs.close();
