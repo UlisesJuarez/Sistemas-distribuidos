@@ -1,7 +1,7 @@
 /*
   Error.java
   Permite regresar al cliente REST un mensaje de error
-  Carlos Pineda Guerrero, marzo 2022.
+  Carlos Pineda Guerrero, Octubre 2021
 */
 
 package negocio;
