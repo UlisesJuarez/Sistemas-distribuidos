@@ -55,6 +55,25 @@ button:hover>img{
     transition: 5ms ease;
 }
 
+.input-group button:hover>img{
+    width:42px;
+    height:42px;
+    -webkit-transition: 5ms ease;
+    -moz-transition: 5ms ease;
+    -ms-transition: 5ms ease;
+    -o-transition: 5ms ease;
+    transition: 5ms ease;
+}
+
 .content{
     margin-top: 30px;
+}
+
+.row-search{
+    padding: 3%;
+}
+
+#busqueda_articulo:hover{
+
+    box-shadow: 5px 5px 5px rgba(79, 59, 192, 0.25);
 }

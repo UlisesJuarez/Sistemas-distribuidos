@@ -24,9 +24,6 @@
             margin-top: 3%;
             margin-bottom: 3%;
         }
-        .row-search{
-            padding: 3%;
-        }
         .button-search{
             display: inline-block;
             margin-left: 3%;
@@ -149,13 +146,12 @@
         function ver_carrito(){
             oculta(get("div_busqueda"));
             muestra(get("div_carrito"));
-            //oculta(get("btn_crear_elem"));
             oculta(get("btn_busqueda"));
             oculta(get("busqueda_articulo"));
             muestra(get("btn_volver"));
             consulta_carrito();
-	    const busqueda = get("div_busqueda");
- 	    busqueda.innerHTML = '';
+            const busqueda = get("div_busqueda");
+            busqueda.innerHTML = '';
         }
 
         function ver_busqueda(){
@@ -326,12 +322,12 @@
     </nav>
 
     <div class="row-search">
-        <div class="input-group" style="width: 100%;">
-            <input type="search" id="busqueda_articulo" class="form-control rounded" placeholder="Search" aria-label="Search"
+        <div class="input-group">
+            <input type="search" id="busqueda_articulo" class="form-control rounded" placeholder="Ingresa producto" aria-label="Search"
             aria-describedby="search-addon" />
-            <button type="button" id="btn_busqueda" class="btn" onclick="buscar_articulo(document.getElementById('busqueda_articulo'))"><img src="images/search.png" height="28" alt="buscar"></button>
-            <button type="button" id="btn_volver" class="button-search" style="display: none;"  onclick="ver_busqueda()" style="width:200px">Volver</button>
-            <button type="button" id="btn_carrito" class="button-search"  onclick="ver_carrito()"><img src="images/carrito.svg" height="28" alt="Carrito"></button>
+            <button type="button" id="btn_busqueda" class="btn" onclick="buscar_articulo(document.getElementById('busqueda_articulo'))"><img src="images/search.png" height="38" alt="buscar"></button>
+            <button type="button" id="btn_volver" class="button-search" style="display: none;"  onclick="ver_busqueda()" style="width:200px"><img src="images/back.png" height="38" alt="regresar"></button>
+            <button type="button" id="btn_carrito" class="button-search"  onclick="ver_carrito()"><img src="images/carrito.svg" height="38" alt="Carrito"></button>
         </div>
         
     </div>
