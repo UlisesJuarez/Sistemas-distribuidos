@@ -158,69 +158,47 @@ public class Servicio {
     int disponible = 0;
     int id_carrito_articulo;
 
-    if (articulo.cantidad < 0)
-      return Response.status(400)
-          .entity(j.toJson(new Error("Debe seleccionar al menos un producto"))).build();
-
-    try {
-      PreparedStatement stmt_1 = conexion
-          .prepareStatement("SELECT cantidad_almacen FROM articulos WHERE id_articulo = ?");
-      try {
-        stmt_1.setInt(1, articulo.id_articulo);
-
-        ResultSet rs = stmt_1.executeQuery();
-        try {
-          if (rs.next())
-            disponible = rs.getInt(1);
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt_1.close();
-      }
-
+    try{
       conexion.setAutoCommit(false);
+      conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+      PreparedStatement stmt_1=conexion.prepareStatement("SELECT cantidad_almacen FROM articulos WHERE id_articulo=?");
+      PreparedStatement stmt_2=conexion.prepareStatement("INSERT INTO carrito_compra(id_carrito_articulo, id_articulo, cantidad) VALUES (0,?,?)");
+      PreparedStatement stmt_3=conexion.prepareStatement("UPDATE articulos SET cantidad_almacen=? WHERE id_articulo=?");
 
-      if (articulo.cantidad <= disponible) {
-
-        PreparedStatement stmt_2 = conexion.prepareStatement(
-            "INSERT INTO carrito_compra(id_carrito_articulo, id_articulo, cantidad) VALUES (0,?,?)",
-            Statement.RETURN_GENERATED_KEYS);
-        ResultSet keys = null;
-        try {
-          stmt_2.setInt(1, articulo.id_articulo);
-          stmt_2.setInt(2, articulo.cantidad);
-          stmt_2.executeUpdate();
-          keys = stmt_2.getGeneratedKeys();
-          keys.next();
-          id_carrito_articulo = keys.getInt(1);
-        } finally {
-          stmt_2.close();
-          keys.close();
+      try{
+        stmt_1.setInt(1,articulo.id_articulo);
+        ResultSet rs=stmt_1.executeQuery();
+        while(rs.next()){
+          disponible=rs.getInt("cantidad_almacen");
         }
-        conexion.commit();
+        if(articulo.id_articulo<=disponible){
+          try{
+            stmt_2.setInt(1, articulo.id_articulo);
+            stmt_2.setInt(2, articulo.cantidad);
+            stmt_2.executeUpdate();
 
-        PreparedStatement stmt_3 = conexion
-            .prepareStatement("UPDATE articulos SET cantidad_almacen=? WHERE id_articulo=?");
-        try {
-          stmt_3.setInt(1, articulo.cantidad);
-          stmt_3.setInt(2, articulo.id_articulo);
-          stmt_3.executeUpdate();
-        } finally {
-          stmt_3.close();
+            stmt_3.setInt(1, articulo.cantidad);
+            stmt_3.setInt(2, articulo.id_articulo);
+            stmt_3.executeUpdate();
+
+            conexion.commit();
+          }catch(Exception e){
+            conexion.rollback();
+          }
+        }else{
+            return Response.status(400).entity(j.toJson(new Error("Lo sentimos, solo tenemos " +Integer.toString(disponible)+" productos disponibles."))).build();
         }
-      } else {
-        return Response.status(400).entity(j.toJson(new Error("No hay suficientes articulos para esa cantidad.")))
-            .build();
+        return Response.ok().entity(j.toJson(id_carrito_articulo)).build();
+      }finally{
+        stmt_1.close();
+        stmt_2.close();
+        stmt_3.close();
       }
-    } catch (Exception e) {
-      conexion.rollback();
+    }catch(Exception e){
       return Response.status(400).entity(j.toJson(new Error(e.getMessage()))).build();
-    } finally {
-      conexion.setAutoCommit(true);
+    }finally{
       conexion.close();
     }
-    return Response.ok().entity(j.toJson(id_carrito_articulo)).build();
   }
 
   @POST
