@@ -209,12 +209,10 @@ public class Servicio {
     ArrayList<Articulo> articulos_carrito = new ArrayList<Articulo>();
     Connection conexion = pool.getConnection();
     try {
-
       PreparedStatement stmt_1 = conexion.prepareStatement(
           "SELECT a.id_articulo, a.nombre, a.descripcion, a.precio, b.cantidad, c.foto FROM carrito_compra b LEFT OUTER JOIN articulos a ON a.id_articulo = b.id_articulo LEFT OUTER JOIN foto_articulos c ON b.id_articulo = c.id_articulo");
 
       try {
-
         ResultSet rs = stmt_1.executeQuery();
         try {
           while (rs.next()) {
@@ -225,11 +223,8 @@ public class Servicio {
             a.precio = rs.getFloat(4);
             a.cantidad = rs.getInt(5);
             a.foto = rs.getBytes(6);
-
-            // Añadimos el objeto "Articulo" al ArrayList
             articulos_carrito.add(a);
           }
-
           if (articulos_carrito.size() > 0) {
             return Response.ok().entity(j.toJson(articulos_carrito)).build();
           } else {
@@ -248,6 +243,72 @@ public class Servicio {
     } finally {
       conexion.close();
     }
+  }
+
+  @POST
+  @Path("eliminar_compra")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response eliminar_compra(@FormParam("articulo") Articulo articulo) throws Exception
+  {
+    int devuelve=0;
+    int almacen =0 ;
+ 
+    Connection conexion = pool.getConnection();
+    try
+    {
+      conexion.setAutoCommit(false);
+      conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+      PreparedStatement stmt_1 = conexion.prepareStatement("SELECT cantidad FROM carrito_compra WHERE  id_articulo=?");
+      PreparedStatement stmt_2 = conexion.prepareStatement("SELECT cantidad_almacen FROM articulos WHERE id_articulo=?");
+      PreparedStatement stmt_3 = conexion.prepareStatement("UPDATE articulos SET cantidad_almacen=? WHERE id_articulo=?");
+      PreparedStatement stmt_4 = conexion.prepareStatement("DELETE FROM carrito_compra WHERE id_articulo=?");
+      try
+      {
+        stmt_1.setInt(1,articulo.id_articulo);
+        ResultSet rs1 =stmt_1.executeQuery();
+        while ( rs1.next() )
+        {
+          devuelve=rs1.getInt("cantidad");  
+        }
+        stmt_2.setInt(1,articulo.id_articulo);
+        ResultSet rs2 =stmt_2.executeQuery();
+        while ( rs2.next() )
+        {
+          almacen=rs2.getInt("cantidad_almacen");  
+        }
+
+        stmt_3.setInt(1,almacen + devuelve);
+        stmt_3.setInt(2, articulo.id_articulo);
+        stmt_3.executeUpdate();
+
+        stmt_4.setInt(1,articulo.id_articulo);
+        stmt_4.executeUpdate();
+
+        conexion.commit();
+
+      }catch (Exception e)
+      {
+        conexion.rollback();
+        return Response.status(400).entity(j.toJson(new Error(e.getMessage()))).build();
+      }
+      finally
+      {
+        stmt_1.close();
+        stmt_2.close();
+        stmt_3.close();
+        stmt_4.close();
+      }  
+    }
+    catch (Exception e)
+    {
+      return Response.status(400).entity(j.toJson(new Error(e.getMessage()))).build();
+    }
+    finally
+    {
+      conexion.close();
+    }
+    return Response.ok().build();
   }
 
 }
