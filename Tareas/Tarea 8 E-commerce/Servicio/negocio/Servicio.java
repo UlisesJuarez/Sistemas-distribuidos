@@ -253,7 +253,7 @@ public class Servicio {
   {
     int devuelve=0;
     int almacen =0 ;
- 
+
     Connection conexion = pool.getConnection();
     try
     {
@@ -309,6 +309,66 @@ public class Servicio {
       conexion.close();
     }
     return Response.ok().build();
+  }
+
+  @POST
+  @Path("eliminar_carrito")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response eliminar_carrito() throws Exception
+  {
+    Connection conexion = pool.getConnection();
+    int almacen=0;
+    try
+    {
+      conexion.setAutoCommit(false);
+      conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+      ArrayList <Integer> listaCompras = new ArrayList<Integer>();
+      PreparedStatement stmt_0 = conexion.prepareStatement("SELECT id_articulo,Sum(cantidad) AS suma FROM carrito_compra GROUP BY id_articulo");
+
+      try
+      {
+        ResultSet rs0 =stmt_0.executeQuery();
+        while ( rs0.next() )
+        {
+          PreparedStatement stmt_1 = conexion.prepareStatement("SELECT cantidad_almacen FROM articulos WHERE id_articulo=?");
+          stmt_1.setInt(1,rs0.getInt("id_articulo"));
+          ResultSet rs1 =stmt_1.executeQuery();
+          while(rs1.next()){
+            almacen=rs1.getInt("cantidad_almacen");
+          }
+          rs1.close();
+
+          PreparedStatement stmt_2 = conexion.prepareStatement("UPDATE articulos SET cantidad_almacen=? WHERE id_articulo=?");
+          stmt_2.setInt(1,rs0.getInt("suma") +  almacen);
+          stmt_2.setInt(2,rs0.getInt("id_articulo"));
+          stmt_2.executeUpdate();
+          stmt_2.close();
+
+        }
+
+        PreparedStatement stmt_3 = conexion.prepareStatement("DELETE FROM carrito_compra WHERE id_articulo=?");
+        stmt_3.setInt(1,rs0.getInt("id_articulo"));
+        stmt_3.executeUpdate();
+        stmt_3.close();
+        conexion.commit();
+        return Response.ok().build();
+
+      } catch(Exception e){
+        conexion.rollback();
+        return Response.status(400).entity(j.toJson(new Error(e.getMessage()))).build();
+      } finally{
+        stmt_0.close();
+      }
+    }catch (Exception e)
+    {
+      return Response.status(400).entity(j.toJson(new Error(e.getMessage()))).build();
+    }
+    finally
+    {
+      conexion.close();
+    }
+    
   }
 
 }
