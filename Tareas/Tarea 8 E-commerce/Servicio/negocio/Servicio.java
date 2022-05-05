@@ -188,7 +188,7 @@ public class Servicio {
         }else{
             return Response.status(400).entity(j.toJson(new Error("Lo sentimos, solo tenemos " +Integer.toString(disponible)+" productos disponibles."))).build();
         }
-        return Response.ok().entity(j.toJson(id_carrito_articulo)).build();
+        return Response.ok().build();
       }finally{
         stmt_1.close();
         stmt_2.close();
