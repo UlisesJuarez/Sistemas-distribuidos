@@ -315,7 +315,7 @@ public class Servicio {
   @Path("eliminar_carrito")
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response eliminar_carrito() throws Exception
+  public Response eliminar_carrito(@FormParam("articulo") Articulo articulo) throws Exception
   {
     Connection conexion = pool.getConnection();
     int almacen=0;

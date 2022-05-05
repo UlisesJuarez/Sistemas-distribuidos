@@ -167,6 +167,25 @@
             });
         }
 
+        function elimina_carrito(id_art)
+        {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            cliente.post("eliminar_carrito",
+            {
+                articulo:
+                {
+                    id_articulo: id_art, 
+                }
+            },
+            function(code,result)
+            {
+                if (code == 200)
+                    alert("Carrito de compras eliminado correctamente.");
+                else
+                    alert("Error: "+JSON.stringify(result));
+            });
+        }
+
         function consulta_carrito()
         {
             var cliente = new WSClient("/Servicio/rest/ws");
@@ -342,9 +361,18 @@
             var total_elem = document.createElement("H3");
             var total_text = document.createTextNode("Costo total:  " + parseInt(cantidad)*parseInt(precio));
             total_elem.appendChild(total_text);
+
+            var btn_elimina_carrito = document.createElement("button");
+            btn_elimina_carrito.setAttribute("type", "button");
+            btn_elimina_carrito.setAttribute("id", "elimina_carrito"+id_elemento);
+            btn_elimina_carrito.setAttribute("onclick", "elimina_carrito("+id_elemento+"))");
+            btn_elimina_carrito.setAttribute("class", "btn btn-danger btn-aditional");
+            btn_elimina_carrito.textContent = 'Eliminar';
+
             //Agregamos al contenedor de compras
             compraDiv.appendChild(cantidad_elem);
             compraDiv.appendChild(total_elem);
+            compraDiv.appendChild(btn_elimina_carrito)
 
             //Añadimos los elementos al nuevo div
             newDiv.appendChild(imgDiv);
