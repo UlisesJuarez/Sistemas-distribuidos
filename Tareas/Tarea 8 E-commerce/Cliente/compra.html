@@ -13,6 +13,7 @@
     <style type="text/css">
         @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
 
         h3{
             font-family: 'Roboto Slab', serif;
@@ -23,24 +24,23 @@
         }
 
         .row {
-            min-height: 210px;
+            min-height: 200px;
             width: 80%;
-            margin: 0 auto;
             text-align: center;
-            border-style: solid;
             box-shadow: rgba(148, 141, 240, 0.4) 5px 5px, rgba(148, 141, 240, 0.3) 10px 10px, rgba(148, 141, 240, 0.2) 15px 15px, rgba(148, 141, 240, 0.1) 20px 20px;
             border-radius: 15px;
             margin-left: 10%;
             margin-right: 10%;
             margin-top: 3%;
             margin-bottom: 3%;
+            padding: 5px 5px;
         }
         .button-search{
             display: inline-block;
             margin-left: 3%;
         }
         .container {
-            width: 200px;
+            width: 190px;
             height: 120px;
             display: inline-block;
             margin-left: 3%;
@@ -63,6 +63,20 @@
         .btn-aditional{
             margin-top: 5%;
             width:190px;
+        }
+        .btn-quitar{
+            margin-top: 7%;
+            width: 190px;
+        }
+
+        .cantidad{
+            border-radius:8px;
+            text-align: center;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+        .cantidad:focus{
+            border: none;
+            box-shadow: 0 0 1px 0.5px rgba(0, 140, 186, 0.5);
         }
 
     </style>
@@ -129,6 +143,25 @@
             {
                 if (code == 200)
                     alert("Articulo agregado al carrito de manera exitosa.");
+                else
+                    alert("Error: "+JSON.stringify(result));
+            });
+        }
+
+        function borrar_compra(id_art)
+        {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            cliente.post("eliminar_compra",
+            {
+                articulo:
+                {
+                    id_articulo: id_art, 
+                }
+            },
+            function(code,result)
+            {
+                if (code == 200)
+                    alert("Articulo eliminado del carrito de manera exitosa.");
                 else
                     alert("Error: "+JSON.stringify(result));
             });
@@ -227,6 +260,7 @@
             cantidad_input.setAttribute("step", "1");
             cantidad_input.setAttribute("onkeypress", "return event.charCode >= 48 && event.charCode <= 57");
             cantidad_input.setAttribute("id", "compra_cantidad"+id_elemento);
+            cantidad_input.setAttribute("class","cantidad")
             //Creamos el boton de comprar
             var boton_compra = document.createElement("button");
             boton_compra.setAttribute("type", "button");
@@ -234,10 +268,21 @@
             boton_compra.setAttribute("onclick", "registrar_compra('"+id_elemento+"', get('compra_cantidad"+id_elemento+"'))");
             boton_compra.setAttribute("class", "btn btn-primary btn-aditional");
             boton_compra.textContent = 'Comprar';
+
+            //boton para eliminar la compra
+            var boton_quitar=document.createElement("button")
+            boton_quitar.setAttribute("type","button")
+            boton_quitar.setAttribute("id","quita_compra"+id_elemento);
+            boton_quitar.setAttribute("onclick", "borrar_compra("+id_elemento+"))");
+            boton_quitar.setAttribute("class","btn btn-danger btn-quitar")
+            boton_quitar.textContent="Quitar"
+
+
             //Agregamos al contenedor de compras
             compraDiv.appendChild(cantidad_text);
             compraDiv.appendChild(cantidad_input);
             compraDiv.appendChild(boton_compra);
+            compraDiv.appendChild(boton_quitar)
 
             //Añadimos los elementos al nuevo div
             newDiv.appendChild(imgDiv);
