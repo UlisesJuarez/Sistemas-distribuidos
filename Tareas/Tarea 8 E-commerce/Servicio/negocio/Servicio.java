@@ -177,7 +177,7 @@ public class Servicio {
             stmt_2.setInt(2, articulo.cantidad);
             stmt_2.executeUpdate();
 
-            stmt_3.setInt(1, disponible-articulo.cantidad);
+            stmt_3.setInt(1, (disponible-articulo.cantidad));
             stmt_3.setInt(2, articulo.id_articulo);
             stmt_3.executeUpdate();
 
@@ -278,7 +278,7 @@ public class Servicio {
           almacen=rs2.getInt("cantidad_almacen");  
         }
 
-        stmt_3.setInt(1,almacen + devuelve);
+        stmt_3.setInt(1,(almacen + devuelve));
         stmt_3.setInt(2,articulo.id_articulo);
         stmt_3.executeUpdate();
 
