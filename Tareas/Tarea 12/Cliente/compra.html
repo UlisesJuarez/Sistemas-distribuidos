@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar articulos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/compra.css">
+    <script src='/WSClient.js'></script>
+
+
+    <script>
+        var foto = null;
+
+        function get(id)
+        {
+            return document.getElementById(id);
+        }
+        function muestra(elemento)
+        {
+            elemento.style.display = "block";
+        }
+        function oculta(elemento)
+        {
+            elemento.style.display = "none";
+        }
+        function muestra_pantalla(elemento)
+        {
+            oculta(get("menu"));
+            muestra(elemento);
+        }
+        function oculta_pantalla(elemento)
+        {
+            oculta(elemento);
+            muestra(get("menu"));
+        }
+        function busqueda(descripcion_elem)
+        {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            cliente.post("busca_articulo",
+            {
+                descripcion: descripcion_elem
+            },
+            function(code,result)
+            {
+                if (code == 200)
+                {
+                    for (var i=0; i<result.length; i++) {
+                        foto = result[i].foto;
+                        elemento_encontrado(result[i].id_articulo, result[i].nombre, result[i].descripcion, result[i].precio, "data:image/jpeg;base64," + foto);
+                    }
+                    
+                }
+                else
+                    alert("Error: " + JSON.stringify(result));
+            });
+        }
+
+        function registrar_compra(id_art, cantidad)
+        {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            cliente.post("comprar_articulo",
+            {
+                articulo:
+                {
+                    id_articulo: id_art, 
+                    cantidad: cantidad.value
+                }
+            },
+            function(code,result)
+            {
+                if (code == 200)
+                    alert("Articulo agregado al carrito de manera exitosa.");
+                else
+                    alert("Error: "+JSON.stringify(result));
+            });
+        }
+
+        function borrar_compra(id_art)
+        {
+            let quita_producto = confirm("Desea borrar este producto del carrito?");
+
+            if(quita_producto){
+                var cliente = new WSClient("/Servicio/rest/ws");
+                cliente.post("eliminar_compra",
+                {
+                    articulo:
+                    {
+                        id_articulo: id_art, 
+                    }
+                },
+                function(code,result)
+                {
+                    if (code == 200)
+                        alert("Articulo eliminado del carrito de manera exitosa.");
+                    else
+                        alert("Error: "+JSON.stringify(result));
+                });
+            }   
+        }
+
+        function elimina_carrito()
+        {
+            let quita_carrito = confirm("Desea borrar el carrito de compras?");
+            if(quita_carrito){
+                var cliente = new WSClient("/Servicio/rest/ws");
+                cliente.post("eliminar_carrito",{},
+                function(code,result)
+                {
+                    if (code == 200)
+                        alert("Carrito de compras eliminado correctamente.");
+                    else
+                        alert("Error: "+JSON.stringify(result));
+                });
+            }
+        }
+
+        function consulta_carrito()
+        {
+            var cliente = new WSClient("/Servicio/rest/ws");
+            cliente.post("ver_carrito", { },
+            function(code,result)
+            {
+                if (code == 200)
+                {
+                    for (var i=0; i<result.length; i++) {
+                        foto = result[i].foto;
+                        elemento_carrito(result[i].id_articulo, result[i].nombre, result[i].descripcion, result[i].precio, result[i].cantidad, "data:image/jpeg;base64," + foto);
+                    }
+                }
+                else
+                    alert("Error: " + JSON.stringify(result));
+            });
+        }  
+
+        function buscar_articulo(articulo_search){
+            var descripcion_search = articulo_search.value;
+            busqueda(descripcion_search);
+        }
+
+        function ver_carrito(){
+            oculta(get("div_busqueda"));
+            muestra(get("div_carrito"));
+            oculta(get("btn_busqueda"));
+            oculta(get("busqueda_articulo"));
+            muestra(get("btn_volver"));
+            muestra(get("btn_eliminar"))
+            consulta_carrito();
+            const busqueda = get("div_busqueda");
+            busqueda.innerHTML = '';
+        }
+
+        function ver_busqueda(){
+            muestra(get("div_busqueda"));
+            oculta(get("div_carrito"));
+            muestra(get("btn_busqueda"));
+            muestra(get("busqueda_articulo"));
+            oculta(get("btn_volver"));
+            oculta(get("btn_eliminar"));
+            const carrito = get("div_carrito");
+            carrito.innerHTML = '';
+        }
+
+        function elemento_encontrado(id_elemento, nombre, descripcion, precio, image){
+        
+            var principal = document.createElement("div");
+            principal.setAttribute("id", "ID"+id_elemento);
+            principal.setAttribute("class", "row");
+
+            var imgDiv = document.createElement("div");
+            imgDiv.setAttribute("class", "container");
+            var img = document.createElement("img");
+            img.setAttribute("src", image);
+            img.setAttribute("alt", "Imagen del producto " + id_elemento);
+            imgDiv.appendChild(img);
+
+            var datosDiv = document.createElement("div");
+            datosDiv.setAttribute("class", "container");
+            var nombre_elem = document.createElement("H3");
+            var nombre_text = document.createTextNode(nombre); 
+            nombre_elem.appendChild(nombre_text); 
+            var precio_elem = document.createElement("p");
+            var precio_text = document.createTextNode("$ " + precio);
+            precio_elem.appendChild(precio_text);
+            var descripcion_elem = document.createElement("p");
+            var descripcion_text = document.createTextNode(descripcion);
+            descripcion_elem.appendChild(descripcion_text);
+            datosDiv.appendChild(nombre_elem);
+            datosDiv.appendChild(precio_elem);
+            datosDiv.appendChild(descripcion_elem);
+            
+            var compraDiv = document.createElement("div");
+            compraDiv.setAttribute("class", "container");
+            var compraAux=document.createElement("div");
+            compraAux.setAttribute("class","alinea")
+            var cantidad_text = document.createTextNode("Cantidad: ");
+    
+            var cantidad_input = document.createElement("input");
+            cantidad_input.setAttribute("type", "number");
+            cantidad_input.setAttribute("min", "1");
+            cantidad_input.setAttribute("value","1");
+            cantidad_input.setAttribute("required","required")
+            cantidad_input.setAttribute("step", "1");
+            cantidad_input.setAttribute("onkeypress", "return event.charCode >= 48 && event.charCode <= 57");
+            cantidad_input.setAttribute("id", "compra_cantidad"+id_elemento);
+            cantidad_input.setAttribute("class","cantidad")
+    
+            var boton_compra = document.createElement("button");
+            boton_compra.setAttribute("type", "button");
+            boton_compra.setAttribute("id", "compra_boton"+id_elemento);
+            boton_compra.setAttribute("onclick", "registrar_compra('"+id_elemento+"', get('compra_cantidad"+id_elemento+"'))");
+            boton_compra.setAttribute("class", "btn btn-primary btn-agrega");
+            boton_compra.textContent = 'Comprar';
+
+            compraAux.appendChild(cantidad_text);
+            compraAux.appendChild(cantidad_input);
+            compraAux.appendChild(boton_compra);
+            compraDiv.appendChild(compraAux)
+
+            principal.appendChild(imgDiv);
+            principal.appendChild(datosDiv);
+            principal.appendChild(compraDiv);
+
+            var currentDiv = document.getElementById("div_busqueda");
+            currentDiv.appendChild(principal)
+        }
+
+        function elemento_carrito(id_elemento, nombre, descripcion, precio, cantidad, image){
+        
+            var principal = document.createElement("div");
+            principal.setAttribute("id", "ID"+id_elemento);
+            principal.setAttribute("class", "row");
+
+            var imgDiv = document.createElement("div");
+            imgDiv.setAttribute("class", "container");
+            var img = document.createElement("img");
+            img.setAttribute("src", image);
+            img.setAttribute("alt", "Imagen del producto " + id_elemento);
+            imgDiv.appendChild(img);
+
+    
+            var datosDiv = document.createElement("div");
+            datosDiv.setAttribute("class", "container");
+            var nombre_elem = document.createElement("h3");
+            var nombre_text = document.createTextNode(nombre); 
+            nombre_elem.appendChild(nombre_text); 
+            var precio_elem = document.createElement("p");
+            var precio_text = document.createTextNode("$ " + precio);
+            precio_elem.appendChild(precio_text);
+            var descripcion_elem = document.createElement("p");
+            var descripcion_text = document.createTextNode(descripcion);
+            descripcion_elem.appendChild(descripcion_text);
+            datosDiv.appendChild(nombre_elem);
+            datosDiv.appendChild(precio_elem);
+            datosDiv.appendChild(descripcion_elem);
+            
+            var compraDiv = document.createElement("div");
+            compraDiv.setAttribute("class", "container");
+            var compraAux=document.createElement("div");
+            compraAux.setAttribute("class","alinea");
+            var cantidad_elem = document.createElement("p");
+            var cantidad_text = document.createTextNode("Cantidad:  " + cantidad);
+            cantidad_elem.appendChild(cantidad_text);
+            var total_elem = document.createElement("h5");
+            var total_text = document.createTextNode("Costo total:  $" + parseFloat(cantidad)*parseFloat(precio));
+            total_elem.appendChild(total_text);
+            var btn_elimina_producto = document.createElement("button");
+            btn_elimina_producto.setAttribute("type", "button");
+            btn_elimina_producto.setAttribute("id", "borrar_compra"+id_elemento);
+            btn_elimina_producto.setAttribute("onclick", "borrar_compra("+id_elemento+")");
+            btn_elimina_producto.setAttribute("class", "btn btn-danger btn-aditional");
+            btn_elimina_producto.textContent = 'Elimina producto';
+            compraAux.appendChild(cantidad_elem);
+            compraAux.appendChild(total_elem);
+            compraAux.appendChild(btn_elimina_producto);
+            compraDiv.appendChild(compraAux)
+
+            principal.appendChild(imgDiv);
+            principal.appendChild(datosDiv);
+            principal.appendChild(compraDiv);
+
+            var currentDiv = document.getElementById("div_carrito");
+            currentDiv.appendChild(principal)
+        }
+
+    </script>
+
+    <title>Comprar articulos</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand">
+                <img src="images/nike.svg" height="28" alt="Nike logo">
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav">
+                    <a href="index.html" class="nav-item nav-link active">Home</a>
+                    <a href="alta.html" class="nav-item nav-link">Nuevo artículo</a>
+                    <a href="compra.html" class="nav-item nav-link">Comprar artículo</a>
+                    <a  onclick="ver_carrito()" class="nav-item nav-link"> <img src="images/carrito.svg" height="28" alt="Carrito"></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row-search">
+        <div class="input-group">
+            <input type="search" id="busqueda_articulo" class="form-control" placeholder="Ingresa producto" aria-label="Search"
+            aria-describedby="search-addon" />
+            <button type="button" id="btn_busqueda" class="btn" onclick="buscar_articulo(document.getElementById('busqueda_articulo'))"><img src="images/search.png" height="38" alt="buscar"></button>
+            <button type="button" id="btn_volver" class="button-search" style="display: none;"  onclick="ver_busqueda()" style="width:200px"><img src="images/back.png" height="38" alt="regresar"></button>
+            <button type="button" id="btn_eliminar"  class="btn btn-danger" onclick="elimina_carrito()">Eliminar carrito</button>
+        </div>
+        
+    </div>
+    
+    <div id="div_busqueda"></div>
+    <div id="div_carrito" style="display:none;"></div>
+
+
+    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+    crossorigin="anonymous"></script>
+</html>
