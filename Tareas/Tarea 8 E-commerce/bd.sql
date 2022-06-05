@@ -1,5 +1,5 @@
-create database servicio_web;
-use servicio_web;
+create database ecommerce;
+use ecommerce;
 
 CREATE TABLE articulos
 (

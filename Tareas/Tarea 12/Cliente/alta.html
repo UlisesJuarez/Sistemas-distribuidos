@@ -7,9 +7,10 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="css/style.css">
-	<script src='/WSClient.js'></script>
+	<script src='/api/Get?nombre=/WSClient2.js'></script>
 	<script>
 		var foto = null;
+		var URL = "/api";
 		function get(id) {
 			return document.getElementById(id);
 		}
@@ -37,22 +38,18 @@
 			get("descripcion").value = "";
 			get("precio").value = "";
 			get("cantidad").value = "";
-			get("foto").src = "./images/vacio.png";
+			get("foto").src = "/api/Get?nombre=/images/vacio.png";
 		}
 
 		function alta() {
-			var cliente = new WSClient("/Servicio/rest/ws");
-			cliente.post("alta_articulo",
-				{
-					articulo:
-					{
+			var cliente = new WSClient2(URL);
+			var articulo={
 						nombre: get("nombre").value,
 						descripcion: get("descripcion").value,
 						precio: get("precio").value,
 						cantidad: get("cantidad").value,
-						foto: foto
-					}
-				},
+						foto: foto};
+			cliente.post("alta_articulo",articulo,
 				function (code, result) {
 					if (code === 200) {
 						alert("Articulo agregado correctamente");
