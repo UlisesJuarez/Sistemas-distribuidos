@@ -25,3 +25,6 @@ CREATE TABLE carrito_compra(
 
 alter table foto_articulos add foreign key (id_articulo) references articulos(id_articulo);
 alter table carrito_compra add foreign key (id_articulo) references articulos(id_articulo);
+
+create user ulises identified by 'ulises123';
+grant all on ecommerce.* to ulises;
