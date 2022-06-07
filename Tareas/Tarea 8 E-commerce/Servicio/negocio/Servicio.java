@@ -171,7 +171,7 @@ public class Servicio {
         while(rs.next()){
           disponible=rs.getInt("cantidad_almacen");
         }
-        if(articulo.id_articulo<=disponible){
+        if(articulo.cantidad_almacen<=disponible){
           try{
             stmt_2.setInt(1, articulo.id_articulo);
             stmt_2.setInt(2, articulo.cantidad);
